@@ -1,0 +1,104 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    name: Lint & Test
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      
+      - run: npm ci
+      - run: npx nx run-many --target=lint --all
+      - run: npx nx run-many --target=test --all --coverage
+
+  build-api:
+    needs: lint-and-test
+    runs-on: ubuntu-latest
+    name: Build API Docker Image
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./product-listing
+          file: ./product-listing/apps/api/Dockerfile
+          push: false
+          tags: product-listing-api:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  migrate-database:
+    needs: lint-and-test
+    runs-on: ubuntu-latest
+    name: Database Migration
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      
+      - run: npm ci
+      - name: Run migrations (Staging)
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL_STAGING }}
+        run: npx drizzle-kit migrate --config product-listing/libs/db/drizzle.config.ts
+        continue-on-error: false
+
+  deploy-staging:
+    needs: [lint-and-test, build-api]
+    runs-on: ubuntu-latest
+    name: Deploy to Fly.io (Staging)
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Deploy API to Fly.io (Staging)
+        uses: superfly/flyctl-actions/setup-flyctl@master
+      
+      - name: Deploy
+        run: |
+          cd product-listing/apps/api
+          flyctl deploy --remote-only
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_STAGING }}
+          FLY_APP: ${{ secrets.FLY_APP_STAGING }}
+
+  deploy-production:
+    needs: [lint-and-test, build-api]
+    runs-on: ubuntu-latest
+    name: Deploy to Fly.io (Production)
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Deploy API to Fly.io (Production)
+        uses: superfly/flyctl-actions/setup-flyctl@master
+      
+      - name: Deploy
+        run: |
+          cd product-listing/apps/api
+          flyctl deploy --remote-only
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_PRODUCTION }}
+          FLY_APP: ${{ secrets.FLY_APP_PRODUCTION }}

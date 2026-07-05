@@ -1,0 +1,3 @@
+{
+  "buildCommand": "npx nx build web"
+}

@@ -62,7 +62,7 @@ jobs:
       - name: Run migrations (Staging)
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL_STAGING }}
-        run: npx drizzle-kit migrate --config product-listing/libs/db/drizzle.config.ts
+        run: npx drizzle-kit migrate --config libs/db/drizzle.config.ts
         continue-on-error: false
 
   deploy-staging:
@@ -78,7 +78,7 @@ jobs:
       
       - name: Deploy
         run: |
-          cd product-listing/apps/api
+          cd apps/api
           flyctl deploy --remote-only
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_STAGING }}
@@ -97,7 +97,7 @@ jobs:
       
       - name: Deploy
         run: |
-          cd product-listing/apps/api
+          cd apps/api
           flyctl deploy --remote-only
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_PRODUCTION }}

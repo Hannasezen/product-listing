@@ -38,8 +38,8 @@ jobs:
       - name: Build Docker image
         uses: docker/build-push-action@v5
         with:
-          context: ./product-listing
-          file: ./product-listing/apps/api/Dockerfile
+          context: .
+          file: ./apps/api/Dockerfile
           push: false
           tags: product-listing-api:latest
           cache-from: type=gha
@@ -55,7 +55,7 @@ jobs:
       
       - uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '24'
           cache: 'npm'
       
       - run: npm install

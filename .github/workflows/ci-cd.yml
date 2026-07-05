@@ -56,15 +56,20 @@ jobs:
       
       - uses: actions/setup-node@v4
         with:
-          node-version: '24'
+          node-version: '22'
           cache: 'npm'
       
       - run: npm install
       - name: Run migrations (Staging)
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL_STAGING }}
-        run: npx drizzle-kit migrate --config libs/db/drizzle.config.ts
-        continue-on-error: false
+        run: |
+          echo "Checking DATABASE_URL is set..."
+          if [ -z "$DATABASE_URL" ]; then
+            echo "ERROR: DATABASE_URL_STAGING secret is not configured"
+            exit 1
+          fi
+          npx drizzle-kit migrate --config libs/db/drizzle.config.ts
 
   deploy-staging:
     needs: [lint-and-test, build-api]

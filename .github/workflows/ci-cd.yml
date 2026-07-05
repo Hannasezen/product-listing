@@ -63,6 +63,7 @@ jobs:
       - name: Run migrations (Staging)
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL_STAGING }}
+          PGSSLMODE: 'require'
         run: |
           echo "Checking DATABASE_URL is set..."
           if [ -z "$DATABASE_URL" ]; then

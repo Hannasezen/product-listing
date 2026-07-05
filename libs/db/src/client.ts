@@ -1,6 +1,25 @@
-import { drizzle } from "drizzle-orm/neon-http";
-import { neon } from "@neondatabase/serverless";
-import * as schema from "./schema.js";
+import { drizzle } from 'drizzle-orm/node-postgres';
+import { Pool } from 'pg';
+import * as schema from './schema.js';
 
-const sql = neon(process.env.DATABASE_URL || "");
-export const db = drizzle(sql, { schema });
+const rawDatabaseUrl = process.env.DATABASE_URL || '';
+const databaseUrl = (() => {
+  if (!rawDatabaseUrl) return '';
+
+  try {
+    const url = new URL(rawDatabaseUrl);
+    if (!url.searchParams.has('sslmode')) {
+      url.searchParams.set('sslmode', 'require');
+    }
+    return url.toString();
+  } catch {
+    return rawDatabaseUrl;
+  }
+})();
+
+const pool = new Pool({
+  connectionString: databaseUrl,
+  ssl: databaseUrl ? { rejectUnauthorized: false } : false,
+});
+
+export const db = drizzle(pool, { schema });

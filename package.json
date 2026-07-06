@@ -51,6 +51,9 @@
     "libs/shared/*",
     "libs/*"
   ],
+  "optionalDependencies": {
+    "@tailwindcss/oxide-linux-x64-gnu": "4.3.2"
+  },
   "dependencies": {
     "@nestjs/common": "^11.0.0",
     "@nestjs/core": "^11.0.0",

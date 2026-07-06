@@ -70,7 +70,7 @@ jobs:
             echo "ERROR: DATABASE_URL_STAGING secret is not configured"
             exit 1
           fi
-          npx drizzle-kit migrate --config libs/db/drizzle.config.ts
+          npx tsx libs/db/src/migrate.ts
 
   deploy-staging:
     needs: [lint-and-test, build-api]

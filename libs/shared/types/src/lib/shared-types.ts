@@ -1,3 +1,21 @@
-// DTOs and interfaces used by both apps.
+export interface Category {
+  id: string;
+  name: string;
+  description: string | null;
+  createdAt: string;
+}
 
-export {};
+export interface Product {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  price: number;
+  categoryId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ProductWithCategory extends Product {
+  category: Category;
+}

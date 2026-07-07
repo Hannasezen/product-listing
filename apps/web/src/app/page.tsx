@@ -1,6 +1,5 @@
 import { Heading } from '@/components/ui/Heading';
 import { ItemCard } from '@/components/ui/ItemCard';
-import { SparklesIcon } from '@/components/ui/icons';
 import { fetchJson } from '@/lib/api';
 import { PRODUCT_LIST_API_PATH } from '@/lib/routes';
 import type { ProductWithCategory } from '@org/shared-types';

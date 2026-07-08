@@ -2,7 +2,11 @@
   "name": "@org/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "lint:web": "nx lint web",
+    "build:web": "nx build web",
+    "prepush": "npm run lint:web && npm run build:web"
+  },
   "private": true,
   "devDependencies": {
     "@eslint/js": "^9.8.0",

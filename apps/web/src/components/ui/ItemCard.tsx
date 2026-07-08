@@ -1,5 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
+import { ProductImage } from "@/components/ui/ProductImage";
 import { productDetailPagePath } from "@/lib/routes";
 
 type ItemCardProps = {
@@ -30,12 +30,10 @@ export function ItemCard({
     >
       <div className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl bg-slate-100">
         {imageUrl ? (
-          <Image
+          <ProductImage
             src={imageUrl}
             alt={title}
-            fill
             sizes="(min-width: 1280px) 360px, (min-width: 768px) 45vw, 90vw"
-            className="object-cover"
           />
         ) : (
           <div className="flex h-full items-center justify-center text-sm text-slate-400">

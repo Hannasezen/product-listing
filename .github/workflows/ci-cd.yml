@@ -72,6 +72,33 @@ jobs:
           fi
           npx tsx libs/db/src/migrate.ts
 
+  seed-database:
+    needs: migrate-database
+    runs-on: ubuntu-latest
+    environment: staging
+    name: Seed Database
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - run: npm install
+      - name: Seed database (Staging)
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL_STAGING }}
+          PGSSLMODE: 'require'
+        run: |
+          echo "Checking DATABASE_URL is set..."
+          if [ -z "$DATABASE_URL" ]; then
+            echo "ERROR: DATABASE_URL_STAGING secret is not configured"
+            exit 1
+          fi
+          npx tsx libs/db/src/seed.ts
+
   deploy-staging:
     needs: [lint-and-test, build-api]
     runs-on: ubuntu-latest

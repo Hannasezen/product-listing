@@ -105,6 +105,14 @@ async function seed() {
         imageUrl: unsplashPhoto("1546776230-bb86256870ce"),
         categoryId: toys.id,
       },
+      {
+        name: "Paw Patrol Action Figures",
+        slug: "paw-patrol-action-figures",
+        description: "A set of 6 action figures from the popular Paw Patrol series.",
+        price: "39.99",
+        imageUrl: unsplashPhoto("1658233427329-9d72b824e144"),
+        categoryId: toys.id,
+      }
     ])
     .onConflictDoUpdate({
       target: products.slug,

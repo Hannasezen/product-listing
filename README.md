@@ -63,9 +63,12 @@ npx nx graph                   # visualize the project graph
 
 ## Environments
 
-| Environment | Branch | Frontend | Backend | Database |
+| Environment | Trigger | Frontend | Backend | Database |
 |---|---|---|---|---|
 | Local | any | `localhost:3000` | `localhost:3001` | Neon dev branch |
-| Preview | `feature/*` | Vercel preview | — | — |
-| Staging | `develop` | Vercel staging | Fly.io staging | Neon staging branch |
-| Production | `main` | Vercel production | Fly.io production | Neon production |
+| Staging | push to `main` | Vercel (see note) | Fly.io staging | Neon staging branch |
+| Production | push to `main` + a `v*` tag | Vercel production | Fly.io production | Neon production |
+
+Pushing to `main` is what promotes to staging — `.github/workflows/ci-cd.yml` runs `migrate-database`, `seed-database`, and `deploy-staging` (Fly.io) on every push to `main`. Production only deploys once that same commit is also tagged `v*` (`deploy-production`). Pushing to `develop` only runs lint/test — it's not wired to any deploy job.
+
+`apps/web/vercel.json` only builds on pushes to `main` or `develop` (its `ignoreCommand` skips everything else); whether a given push becomes a Vercel Production or Preview deployment depends on the Production Branch configured in the Vercel project settings (not tracked in this repo), so treat "Vercel (see note)" above as "check the Vercel dashboard for the actual result."

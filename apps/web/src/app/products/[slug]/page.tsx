@@ -1,9 +1,9 @@
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Heading } from "@/components/ui/Heading";
 import { HeartIcon, ShoppingBagIcon } from "@/components/ui/icons";
+import { ProductImage } from "@/components/ui/ProductImage";
 import { fetchJson } from "@/lib/api";
 import { productDetailApiPath } from "@/lib/routes";
 import type { ProductWithCategory } from "@org/shared-types";
@@ -52,12 +52,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
         <section className="grid gap-8 rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-sm sm:p-8 md:grid-cols-2 md:items-start">
           <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-slate-100">
             {product.imageUrl ? (
-              <Image
+              <ProductImage
                 src={product.imageUrl}
                 alt={product.name}
-                fill
                 sizes="(min-width: 768px) 40vw, 90vw"
-                className="object-cover"
                 priority
               />
             ) : (

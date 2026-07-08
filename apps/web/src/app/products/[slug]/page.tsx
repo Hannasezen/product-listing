@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/Button";
@@ -48,32 +49,51 @@ export default async function ProductPage({ params }: ProductPageProps) {
           </ol>
         </nav>
 
-        <section className="rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-          <span className="inline-flex rounded-full bg-slate-900 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-white">
-            {product.category.name}
-          </span>
+        <section className="grid gap-8 rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-sm sm:p-8 md:grid-cols-2 md:items-start">
+          <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-slate-100">
+            {product.imageUrl ? (
+              <Image
+                src={product.imageUrl}
+                alt={product.name}
+                fill
+                sizes="(min-width: 768px) 40vw, 90vw"
+                className="object-cover"
+                priority
+              />
+            ) : (
+              <div className="flex h-full items-center justify-center text-sm text-slate-400">
+                No image
+              </div>
+            )}
+          </div>
 
-          <Heading as="h1" className="mt-4">
-            {product.name}
-          </Heading>
+          <div>
+            <span className="inline-flex rounded-full bg-slate-900 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-white">
+              {product.category.name}
+            </span>
 
-          <p className="mt-3 max-w-2xl text-base leading-7 text-slate-600">
-            {product.description ?? "A reliable choice for everyday use."}
-          </p>
+            <Heading as="h1" className="mt-4">
+              {product.name}
+            </Heading>
 
-          <p className="mt-6 text-3xl font-semibold text-slate-900">
-            ${product.price.toFixed(2)}
-          </p>
+            <p className="mt-3 max-w-2xl text-base leading-7 text-slate-600">
+              {product.description ?? "A reliable choice for everyday use."}
+            </p>
 
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Button size="lg" className="gap-2">
-              <ShoppingBagIcon className="h-4 w-4" />
-              Buy now
-            </Button>
-            <Button variant="secondary" size="lg" className="gap-2">
-              <HeartIcon className="h-4 w-4" />
-              Add to favourites
-            </Button>
+            <p className="mt-6 text-3xl font-semibold text-slate-900">
+              ${product.price.toFixed(2)}
+            </p>
+
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Button size="lg" className="gap-2">
+                <ShoppingBagIcon className="h-4 w-4" />
+                Buy now
+              </Button>
+              <Button variant="secondary" size="lg" className="gap-2">
+                <HeartIcon className="h-4 w-4" />
+                Add to favourites
+              </Button>
+            </div>
           </div>
         </section>
       </main>

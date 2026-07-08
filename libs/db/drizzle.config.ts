@@ -2,9 +2,16 @@
 
 import { defineConfig } from 'drizzle-kit';
 import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+import { dirname, join, relative } from 'path';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+
+// drizzle-kit mishandles absolute `schema`/`out` paths (it naively prefixes
+// them with "./", producing a broken path like ".//Users/..."). Resolving
+// to a path relative to the invocation cwd sidesteps that, regardless of
+// where the command is run from (repo root, libs/db, or via nx).
+const relativeToCwd = (absolutePath: string) =>
+  relative(process.cwd(), absolutePath);
 
 const rawDatabaseUrl = process.env.DATABASE_URL || '';
 const databaseUrl = (() => {
@@ -22,8 +29,8 @@ const databaseUrl = (() => {
 })();
 
 export default defineConfig({
-  schema: join(__dirname, 'src/schema.ts'),
-  out: join(__dirname, 'src/migrations'),
+  schema: relativeToCwd(join(__dirname, 'src/schema.ts')),
+  out: relativeToCwd(join(__dirname, 'src/migrations')),
   dialect: 'postgresql',
   dbCredentials: {
     url: databaseUrl,

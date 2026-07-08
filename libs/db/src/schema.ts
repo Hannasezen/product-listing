@@ -70,6 +70,7 @@ export const products = pgTable("products", {
   slug: text("slug").notNull().unique(),
   description: text("description"),
   price: numeric("price", { precision: 10, scale: 2 }).notNull(),
+  imageUrl: text("imageUrl"),
   categoryId: uuid("categoryId")
     .notNull()
     .references(() => categories.id, { onDelete: "restrict" }),

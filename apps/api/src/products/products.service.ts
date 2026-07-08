@@ -55,6 +55,7 @@ function toProductDto(row: ProductRow): ProductWithCategory {
     slug: row.slug,
     description: row.description,
     price: Number(row.price),
+    imageUrl: row.imageUrl,
     categoryId: row.categoryId,
     createdAt: row.createdAt.toISOString(),
     updatedAt: row.updatedAt.toISOString(),

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { productDetailPagePath } from "@/lib/routes";
 
@@ -7,6 +8,7 @@ type ItemCardProps = {
   description: string;
   category: string;
   price: number;
+  imageUrl?: string | null;
   stock?: string | number;
 };
 
@@ -16,6 +18,7 @@ export function ItemCard({
   description,
   category,
   price,
+  imageUrl,
   stock = "In stock",
 }: ItemCardProps) {
   const stockLabel = typeof stock === "number" ? `Stock ${stock}` : stock;
@@ -25,7 +28,23 @@ export function ItemCard({
       href={productDetailPagePath(slug)}
       className="block rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-sm cursor-pointer"
     >
-      <div className="flex items-start justify-between gap-3">
+      <div className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl bg-slate-100">
+        {imageUrl ? (
+          <Image
+            src={imageUrl}
+            alt={title}
+            fill
+            sizes="(min-width: 1280px) 360px, (min-width: 768px) 45vw, 90vw"
+            className="object-cover"
+          />
+        ) : (
+          <div className="flex h-full items-center justify-center text-sm text-slate-400">
+            No image
+          </div>
+        )}
+      </div>
+
+      <div className="mt-4 flex items-start justify-between gap-3">
         <span className="inline-flex rounded-full bg-slate-900 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-white">
           {category}
         </span>

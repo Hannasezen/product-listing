@@ -35,7 +35,7 @@ export default async function HomePage() {
               No products are available right now. The API connection can be checked next.
             </div>
           ) : (
-            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            <div className="grid gap-4 min-[480px]:grid-cols-2 min-[920px]:grid-cols-3">
               {products.map((product) => (
                 <ItemCard
                   key={product.id}
@@ -44,6 +44,7 @@ export default async function HomePage() {
                   description={product.description ?? 'A reliable choice for everyday use.'}
                   category={product.category.name}
                   price={product.price}
+                  imageUrl={product.imageUrl}
                   stock="In stock"
                 />
               ))}

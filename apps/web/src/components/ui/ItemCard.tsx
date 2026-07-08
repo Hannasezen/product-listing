@@ -26,7 +26,7 @@ export function ItemCard({
   return (
     <Link
       href={productDetailPagePath(slug)}
-      className="block rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-sm cursor-pointer"
+      className="flex h-full flex-col rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-sm cursor-pointer"
     >
       <div className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl bg-slate-100">
         {imageUrl ? (
@@ -51,13 +51,13 @@ export function ItemCard({
         </span>
       </div>
 
-      <div className="mt-5 space-y-3">
+      <div className="mt-5 flex flex-1 flex-col">
         <div>
           <h3 className="text-lg font-semibold text-slate-900">{title}</h3>
           <p className="mt-2 text-sm leading-6 text-slate-600">{description}</p>
         </div>
 
-        <div className="flex items-center justify-between border-t border-slate-100 pt-4">
+        <div className="mt-auto flex items-center justify-between border-t border-slate-100 pt-4">
           <div>
             <p className="text-xs uppercase tracking-[0.2em] text-slate-400">
               Price

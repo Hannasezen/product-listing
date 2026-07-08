@@ -1,4 +1,8 @@
+import Link from "next/link";
+import { productDetailPagePath } from "@/lib/routes";
+
 type ItemCardProps = {
+  slug: string;
   title: string;
   description: string;
   category: string;
@@ -7,6 +11,7 @@ type ItemCardProps = {
 };
 
 export function ItemCard({
+  slug,
   title,
   description,
   category,
@@ -16,7 +21,10 @@ export function ItemCard({
   const stockLabel = typeof stock === "number" ? `Stock ${stock}` : stock;
 
   return (
-    <article className="rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-sm transition-transform duration-200 hover:-translate-y-0.5 hover:shadow-md">
+    <Link
+      href={productDetailPagePath(slug)}
+      className="block rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-sm cursor-pointer"
+    >
       <div className="flex items-start justify-between gap-3">
         <span className="inline-flex rounded-full bg-slate-900 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-white">
           {category}
@@ -44,6 +52,6 @@ export function ItemCard({
           <span className="text-sm font-medium text-slate-500">View</span>
         </div>
       </div>
-    </article>
+    </Link>
   );
 }

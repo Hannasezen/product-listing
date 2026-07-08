@@ -37,6 +37,15 @@ export class ProductsService {
     if (!row) throw new NotFoundException(`Product ${id} not found`);
     return toProductDto(row);
   }
+
+  async findBySlug(slug: string): Promise<ProductWithCategory> {
+    const row = await findProductWithCategory(
+      this.db,
+      eq(products.slug, slug),
+    );
+    if (!row) throw new NotFoundException(`Product ${slug} not found`);
+    return toProductDto(row);
+  }
 }
 
 function toProductDto(row: ProductRow): ProductWithCategory {

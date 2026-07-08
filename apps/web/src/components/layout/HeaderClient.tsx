@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import {
   ChevronDownIcon,
@@ -20,6 +20,24 @@ type HeaderClientProps = {
 export function HeaderClient({ categories }: HeaderClientProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
+  const [isDesktopCategoriesOpen, setIsDesktopCategoriesOpen] = useState(false);
+  const desktopCategoriesRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!isDesktopCategoriesOpen) return;
+
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        desktopCategoriesRef.current &&
+        !desktopCategoriesRef.current.contains(event.target as Node)
+      ) {
+        setIsDesktopCategoriesOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isDesktopCategoriesOpen]);
 
   return (
     <header className="border-b border-slate-200 bg-white/80 backdrop-blur">
@@ -46,28 +64,37 @@ export function HeaderClient({ categories }: HeaderClientProps) {
               {item}
             </Link>
           ))}
-          <div className="group relative z-50">
-            <button className="flex items-center gap-2 rounded-full border border-slate-200 px-3 py-2 text-sm font-medium text-slate-700">
+          <div className="relative z-50" ref={desktopCategoriesRef}>
+            <button
+              className="flex items-center gap-2 rounded-full border border-slate-200 px-3 py-2 text-sm font-medium text-slate-700"
+              aria-expanded={isDesktopCategoriesOpen}
+              onClick={() => setIsDesktopCategoriesOpen((open) => !open)}
+            >
               Categories
-              <ChevronDownIcon className="h-4 w-4" />
+              <ChevronDownIcon
+                className={`h-4 w-4 transition ${isDesktopCategoriesOpen ? "rotate-180" : ""}`}
+              />
             </button>
-            <div className="absolute right-0 z-[60] mt-2 hidden min-w-44 rounded-2xl border border-slate-200 bg-white p-2 shadow-lg group-hover:block">
-              {categories.length === 0 ? (
-                <p className="px-3 py-2 text-sm text-slate-500">
-                  No categories yet
-                </p>
-              ) : (
-                categories.map((category) => (
-                  <Link
-                    key={category.id}
-                    href="/"
-                    className="block rounded-xl px-3 py-2 text-sm text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
-                  >
-                    {category.name}
-                  </Link>
-                ))
-              )}
-            </div>
+            {isDesktopCategoriesOpen ? (
+              <div className="absolute right-0 z-[60] mt-2 min-w-44 rounded-2xl border border-slate-200 bg-white p-2 shadow-lg">
+                {categories.length === 0 ? (
+                  <p className="px-3 py-2 text-sm text-slate-500">
+                    No categories yet
+                  </p>
+                ) : (
+                  categories.map((category) => (
+                    <Link
+                      key={category.id}
+                      href="/"
+                      className="block rounded-xl px-3 py-2 text-sm text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
+                      onClick={() => setIsDesktopCategoriesOpen(false)}
+                    >
+                      {category.name}
+                    </Link>
+                  ))
+                )}
+              </div>
+            ) : null}
           </div>
         </nav>
 

@@ -15,6 +15,13 @@
       "when": 1783505285243,
       "tag": "0001_opposite_toro",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1783523836487,
+      "tag": "0002_parched_blob",
+      "breakpoints": true
     }
   ]
 }

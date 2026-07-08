@@ -1,5 +1,5 @@
 import { Heading } from '@/components/ui/Heading';
-import { ItemCard } from '@/components/ui/ItemCard';
+import { ProductGrid } from '@/components/ui/ProductGrid';
 import { fetchJson } from '@/lib/api';
 import { PRODUCT_LIST_API_PATH } from '@/lib/routes';
 import type { ProductWithCategory } from '@org/shared-types';
@@ -30,26 +30,7 @@ export default async function HomePage() {
             <p className="text-sm text-slate-500">{products.length} items</p>
           </div>
 
-          {products.length === 0 ? (
-            <div className="rounded-[1.5rem] border border-dashed border-slate-300 bg-white/70 p-8 text-center text-slate-600">
-              No products are available right now. The API connection can be checked next.
-            </div>
-          ) : (
-            <div className="grid gap-4 min-[480px]:grid-cols-2 min-[920px]:grid-cols-3">
-              {products.map((product) => (
-                <ItemCard
-                  key={product.id}
-                  slug={product.slug}
-                  title={product.name}
-                  description={product.description ?? 'A reliable choice for everyday use.'}
-                  category={product.category.name}
-                  price={product.price}
-                  imageUrl={product.imageUrl}
-                  stock="In stock"
-                />
-              ))}
-            </div>
-          )}
+          <ProductGrid products={products} />
         </section>
       </main>
     </div>

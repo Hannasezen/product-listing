@@ -13,8 +13,14 @@ function unsplashPhoto(id: string) {
 async function seed() {
   await db
     .insert(categories)
-    .values([{ name: "Books" }, { name: "Toys" }])
-    .onConflictDoNothing({ target: categories.name });
+    .values([
+      { name: "Books", slug: "books" },
+      { name: "Toys", slug: "toys" },
+    ])
+    .onConflictDoUpdate({
+      target: categories.name,
+      set: { slug: sql`excluded."slug"` },
+    });
 
   const allCategories = await db.select().from(categories);
   const books = allCategories.find((category) => category.name === "Books");

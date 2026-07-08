@@ -9,6 +9,7 @@ import {
   ShoppingBagIcon,
   XIcon,
 } from "@/components/ui/icons";
+import { categoryPagePath } from "@/lib/routes";
 import type { Category } from "@org/shared-types";
 
 const navItems = ["Home", "Shop", "About"];
@@ -85,7 +86,7 @@ export function HeaderClient({ categories }: HeaderClientProps) {
                   categories.map((category) => (
                     <Link
                       key={category.id}
-                      href="/"
+                      href={categoryPagePath(category.slug)}
                       className="block rounded-xl px-3 py-2 text-sm text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
                       onClick={() => setIsDesktopCategoriesOpen(false)}
                     >
@@ -109,13 +110,20 @@ export function HeaderClient({ categories }: HeaderClientProps) {
             aria-controls="mobile-menu"
             onClick={() => setIsMenuOpen((open) => !open)}
           >
-            {isMenuOpen ? <XIcon className="h-5 w-5" /> : <MenuIcon className="h-5 w-5" />}
+            {isMenuOpen ? (
+              <XIcon className="h-5 w-5" />
+            ) : (
+              <MenuIcon className="h-5 w-5" />
+            )}
           </button>
         </div>
       </div>
 
       {isMenuOpen ? (
-        <div id="mobile-menu" className="border-t border-slate-200 bg-white px-4 py-4 md:hidden">
+        <div
+          id="mobile-menu"
+          className="border-t border-slate-200 bg-white px-4 py-4 md:hidden"
+        >
           <div className="space-y-3">
             {navItems.map((item) => (
               <Link
@@ -134,7 +142,9 @@ export function HeaderClient({ categories }: HeaderClientProps) {
                 onClick={() => setIsCategoriesOpen((open) => !open)}
               >
                 <span>Categories</span>
-                <ChevronDownIcon className={`h-4 w-4 transition ${isCategoriesOpen ? "rotate-180" : ""}`} />
+                <ChevronDownIcon
+                  className={`h-4 w-4 transition ${isCategoriesOpen ? "rotate-180" : ""}`}
+                />
               </button>
 
               {isCategoriesOpen ? (
@@ -147,7 +157,7 @@ export function HeaderClient({ categories }: HeaderClientProps) {
                     categories.map((category) => (
                       <Link
                         key={category.id}
-                        href="/"
+                        href={categoryPagePath(category.slug)}
                         className="block rounded-xl px-3 py-2 text-sm text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
                         onClick={() => setIsMenuOpen(false)}
                       >

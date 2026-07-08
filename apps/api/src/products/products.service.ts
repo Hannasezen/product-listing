@@ -1,6 +1,7 @@
 import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { DRIZZLE, eq, products, type Database } from "@org/db";
 import type { ProductWithCategory } from "@org/shared-types";
+import { toCategoryDto } from "../categories/categories.service.js";
 import { ListProductsQueryDto } from "./dto/list-products.dto.js";
 
 type FindProductsConfig = NonNullable<
@@ -59,11 +60,6 @@ function toProductDto(row: ProductRow): ProductWithCategory {
     categoryId: row.categoryId,
     createdAt: row.createdAt.toISOString(),
     updatedAt: row.updatedAt.toISOString(),
-    category: {
-      id: row.category.id,
-      name: row.category.name,
-      description: row.category.description,
-      createdAt: row.category.createdAt.toISOString(),
-    },
+    category: toCategoryDto(row.category),
   };
 }

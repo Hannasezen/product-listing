@@ -11,6 +11,11 @@
       "import": "./src/index.ts",
       "default": "./src/index.ts"
     },
+    "./auth-adapter": {
+      "types": "./src/auth-adapter.ts",
+      "import": "./src/auth-adapter.ts",
+      "default": "./src/auth-adapter.ts"
+    },
     "./package.json": "./package.json"
   },
   "nx": {

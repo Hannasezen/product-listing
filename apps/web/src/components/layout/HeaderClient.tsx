@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { Button } from "@/components/ui/Button";
+import type { Session } from "next-auth";
 import {
   ChevronDownIcon,
   MenuIcon,
@@ -14,11 +15,30 @@ import type { Category } from "@org/shared-types";
 
 const navItems = ["Home", "Shop", "About"];
 
+type SessionUser = Session["user"];
+
 type HeaderClientProps = {
   categories: Category[];
+  user: SessionUser | null;
+  onSignOut: () => Promise<void>;
 };
 
-export function HeaderClient({ categories }: HeaderClientProps) {
+function getInitials(user: SessionUser): string {
+  if (user.name?.trim()) {
+    const [first, ...rest] = user.name.trim().split(/\s+/);
+    const last = rest.at(-1);
+    return (first[0] + (last?.[0] ?? "")).toUpperCase();
+  }
+  return user.email?.[0]?.toUpperCase() ?? "?";
+}
+
+export function HeaderClient({
+  categories,
+  user,
+  onSignOut,
+}: HeaderClientProps) {
+  const pathname = usePathname();
+  const signInHref = `/sign-in?callbackUrl=${encodeURIComponent(pathname || "/")}`;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
   const [isDesktopCategoriesOpen, setIsDesktopCategoriesOpen] = useState(false);
@@ -100,9 +120,23 @@ export function HeaderClient({ categories }: HeaderClientProps) {
         </nav>
 
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="sm" className="hidden sm:inline-flex">
-            Sign in
-          </Button>
+          {user ? (
+            <Link
+              href="/my-account"
+              className="hidden h-10 w-10 items-center justify-center rounded-full bg-slate-900 text-sm font-semibold text-white transition hover:bg-slate-700 sm:inline-flex"
+              aria-label="My account"
+              title={user.email ?? undefined}
+            >
+              {getInitials(user)}
+            </Link>
+          ) : (
+            <Link
+              href={signInHref}
+              className="hidden items-center justify-center rounded-full border border-transparent bg-transparent px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100 sm:inline-flex"
+            >
+              Sign in
+            </Link>
+          )}
           <button
             className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 text-slate-700 md:hidden"
             aria-label={isMenuOpen ? "Close menu" : "Open menu"}
@@ -169,9 +203,24 @@ export function HeaderClient({ categories }: HeaderClientProps) {
               ) : null}
             </div>
 
-            <Button variant="secondary" className="w-full justify-center">
-              Sign in
-            </Button>
+            {user ? (
+              <form action={onSignOut}>
+                <button
+                  type="submit"
+                  className="flex w-full items-center justify-center gap-2 rounded-full border border-transparent bg-slate-900 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-slate-700"
+                >
+                  Sign out
+                </button>
+              </form>
+            ) : (
+              <Link
+                href={signInHref}
+                onClick={() => setIsMenuOpen(false)}
+                className="flex w-full items-center justify-center rounded-full border border-transparent bg-white px-4 py-2.5 text-sm font-medium text-slate-900 transition-colors hover:bg-slate-100"
+              >
+                Sign in
+              </Link>
+            )}
           </div>
         </div>
       ) : null}

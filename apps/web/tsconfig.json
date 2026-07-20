@@ -51,6 +51,12 @@
   "references": [
     {
       "path": "../../libs/shared/types"
+    },
+    {
+      "path": "../../libs/db"
+    },
+    {
+      "path": "../../libs/auth"
     }
   ]
 }

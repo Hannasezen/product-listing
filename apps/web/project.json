@@ -1,0 +1,20 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "targets": {
+    "build": {
+      "options": {
+        "command": "next build --webpack"
+      }
+    },
+    "dev": {
+      "options": {
+        "command": "next dev --webpack"
+      }
+    },
+    "start": {
+      "options": {
+        "command": "next start"
+      }
+    }
+  }
+}

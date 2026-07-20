@@ -2,6 +2,12 @@
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  transpilePackages: ['@org/db', '@org/auth'],
+  experimental: {
+    extensionAlias: {
+      '.js': ['.ts', '.tsx', '.js'],
+    },
+  },
   images: {
     remotePatterns: [
       {

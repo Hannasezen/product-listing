@@ -40,10 +40,7 @@ export class ProductsService {
   }
 
   async findBySlug(slug: string): Promise<ProductWithCategory> {
-    const row = await findProductWithCategory(
-      this.db,
-      eq(products.slug, slug),
-    );
+    const row = await findProductWithCategory(this.db, eq(products.slug, slug));
     if (!row) throw new NotFoundException(`Product ${slug} not found`);
     return toProductDto(row);
   }

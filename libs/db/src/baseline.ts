@@ -1,22 +1,22 @@
-import crypto from 'node:crypto';
-import fs from 'node:fs';
-import { Pool } from 'pg';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+import crypto from "node:crypto";
+import fs from "node:fs";
+import { Pool } from "pg";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-const rawDatabaseUrl = process.env.DATABASE_URL || '';
+const rawDatabaseUrl = process.env.DATABASE_URL || "";
 if (!rawDatabaseUrl) {
-  console.error('ERROR: DATABASE_URL is not set');
+  console.error("ERROR: DATABASE_URL is not set");
   process.exit(1);
 }
 
 const databaseUrl = (() => {
   try {
     const url = new URL(rawDatabaseUrl);
-    if (!url.searchParams.has('sslmode')) {
-      url.searchParams.set('sslmode', 'require');
+    if (!url.searchParams.has("sslmode")) {
+      url.searchParams.set("sslmode", "require");
     }
     return url.toString();
   } catch {
@@ -24,9 +24,9 @@ const databaseUrl = (() => {
   }
 })();
 
-const migrationsFolder = join(__dirname, 'migrations');
+const migrationsFolder = join(__dirname, "migrations");
 const journal = JSON.parse(
-  fs.readFileSync(join(migrationsFolder, 'meta/_journal.json')).toString(),
+  fs.readFileSync(join(migrationsFolder, "meta/_journal.json")).toString(),
 );
 
 const pool = new Pool({
@@ -41,7 +41,7 @@ try {
   if (!existing[0]?.reg) {
     console.error(
       'ERROR: "accounts" table does not exist in this database - nothing to baseline. ' +
-        'Run the normal migrate script instead.',
+        "Run the normal migrate script instead.",
     );
     process.exit(1);
   }
@@ -60,7 +60,7 @@ try {
   );
   if (already[0].count > 0) {
     console.log(
-      'Migrations table is not empty - already baselined or has real history. Nothing to do.',
+      "Migrations table is not empty - already baselined or has real history. Nothing to do.",
     );
     process.exit(0);
   }
@@ -69,7 +69,7 @@ try {
     const sqlText = fs
       .readFileSync(join(migrationsFolder, `${entry.tag}.sql`))
       .toString();
-    const hash = crypto.createHash('sha256').update(sqlText).digest('hex');
+    const hash = crypto.createHash("sha256").update(sqlText).digest("hex");
     await pool.query(
       `insert into "drizzle"."__drizzle_migrations" ("hash", "created_at") values ($1, $2)`,
       [hash, entry.when],
@@ -77,7 +77,7 @@ try {
     console.log(`Baselined migration ${entry.tag} (hash ${hash})`);
   }
 
-  console.log('Baseline complete.');
+  console.log("Baseline complete.");
 } finally {
   await pool.end();
 }

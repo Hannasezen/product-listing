@@ -1,8 +1,8 @@
 /// <reference types="node" />
 
-import { defineConfig } from 'drizzle-kit';
-import { fileURLToPath } from 'url';
-import { dirname, join, relative } from 'path';
+import { defineConfig } from "drizzle-kit";
+import { fileURLToPath } from "url";
+import { dirname, join, relative } from "path";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -13,14 +13,14 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const relativeToCwd = (absolutePath: string) =>
   relative(process.cwd(), absolutePath);
 
-const rawDatabaseUrl = process.env.DATABASE_URL || '';
+const rawDatabaseUrl = process.env.DATABASE_URL || "";
 const databaseUrl = (() => {
-  if (!rawDatabaseUrl) return '';
+  if (!rawDatabaseUrl) return "";
 
   try {
     const url = new URL(rawDatabaseUrl);
-    if (!url.searchParams.has('sslmode')) {
-      url.searchParams.set('sslmode', 'require');
+    if (!url.searchParams.has("sslmode")) {
+      url.searchParams.set("sslmode", "require");
     }
     return url.toString();
   } catch {
@@ -29,9 +29,9 @@ const databaseUrl = (() => {
 })();
 
 export default defineConfig({
-  schema: relativeToCwd(join(__dirname, 'src/schema.ts')),
-  out: relativeToCwd(join(__dirname, 'src/migrations')),
-  dialect: 'postgresql',
+  schema: relativeToCwd(join(__dirname, "src/schema.ts")),
+  out: relativeToCwd(join(__dirname, "src/migrations")),
+  dialect: "postgresql",
   dbCredentials: {
     url: databaseUrl,
   },

@@ -21,3 +21,8 @@
 - The `nx-generate` skill handles generator discovery internally - don't call nx_docs just to look up generator syntax
 
 <!-- nx configuration end-->
+
+# Project docs
+
+- `../PRODUCT.md`, `../TECHNICAL.md`, `../PLAN.md` — product spec, technical design, phased implementation plan (one level up, outside this git repo)
+- `AUTH.md` — read before touching anything auth-related. Documents non-obvious decisions from the Phase 4 implementation (JWT encode/decode override, why `apps/web` is forced onto webpack, a seed-script/OAuth gotcha, what's not built yet) that aren't derivable from the code alone.

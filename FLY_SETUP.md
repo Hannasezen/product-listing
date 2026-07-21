@@ -24,7 +24,7 @@ flyctl app create product-listing-api-production
 flyctl secrets set \
   --app product-listing-api-staging \
   DATABASE_URL="your_neon_staging_url" \
-  AUTH_SECRET="your_auth_secret" \
+  NEXTAUTH_SECRET="your_auth_secret" \
   GOOGLE_CLIENT_ID="your_google_client_id" \
   GOOGLE_CLIENT_SECRET="your_google_client_secret" \
   RESEND_API_KEY="your_resend_api_key"
@@ -35,7 +35,7 @@ flyctl secrets set \
 flyctl secrets set \
   --app product-listing-api-production \
   DATABASE_URL="your_neon_production_url" \
-  AUTH_SECRET="your_auth_secret" \
+  NEXTAUTH_SECRET="your_auth_secret" \
   GOOGLE_CLIENT_ID="your_google_client_id" \
   GOOGLE_CLIENT_SECRET="your_google_client_secret" \
   RESEND_API_KEY="your_resend_api_key"

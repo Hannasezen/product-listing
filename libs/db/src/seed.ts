@@ -1,6 +1,6 @@
 import { sql } from "drizzle-orm";
 import { db } from "./client.js";
-import { categories, products, users } from "./schema.js";
+import { categories, products } from "./schema.js";
 
 function openLibraryCover(isbn: string) {
   return `https://covers.openlibrary.org/b/isbn/${isbn}-L.jpg`;
@@ -125,16 +125,6 @@ async function seed() {
       target: products.slug,
       set: { imageUrl: sql`excluded."imageUrl"` },
     });
-
-  await db
-    .insert(users)
-    .values([
-      {
-        name: "Admin",
-        email: "hanna.sezen.ua@gmail.com",
-      },
-    ])
-    .onConflictDoNothing({ target: users.email });
 
   console.log("Seed complete");
 }

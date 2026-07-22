@@ -125,4 +125,9 @@ export const usersRelations = relations(users, ({ many }) => ({
   cartItems: many(cartItems),
 }));
 
-
+export const favoritesRelations = relations(favorites, ({ one }) => ({
+  product: one(products, {
+    fields: [favorites.productId],
+    references: [products.id],
+  }),
+}));

@@ -21,3 +21,7 @@ export interface Product {
 export interface ProductWithCategory extends Product {
   category: Category;
 }
+
+export interface FavoriteProduct extends ProductWithCategory {
+  addedAt: string;
+}

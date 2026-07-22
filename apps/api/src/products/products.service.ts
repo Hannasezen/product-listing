@@ -46,7 +46,7 @@ export class ProductsService {
   }
 }
 
-function toProductDto(row: ProductRow): ProductWithCategory {
+export function toProductDto(row: ProductRow): ProductWithCategory {
   return {
     id: row.id,
     name: row.name,

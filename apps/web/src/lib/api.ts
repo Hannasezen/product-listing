@@ -15,3 +15,32 @@ export async function fetchJson<T>(path: string): Promise<T> {
 
   return response.json() as Promise<T>;
 }
+
+export async function fetchJsonWithToken<T>(path: string, token: string): Promise<T> {
+  const response = await fetch(`${getApiBaseUrl()}${path}`, {
+    cache: 'no-store',
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Request failed with status ${response.status}`);
+  }
+
+  return response.json() as Promise<T>;
+}
+
+export async function postJsonWithToken(
+  path: string,
+  token: string,
+  body: unknown,
+): Promise<Response> {
+  return fetch(`${getApiBaseUrl()}${path}`, {
+    method: 'POST',
+    cache: 'no-store',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  });
+}

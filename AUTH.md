@@ -8,10 +8,10 @@ reasons and look like they could be simplified when they can't be.
 
 Phase 4 is functionally complete and tested locally: Google OAuth and Resend
 magic-link both work, session/role claims are correct, and both NestJS guards exist
-and typecheck. **Nothing in `apps/api` actually uses the guards yet** — no controller
-has `@UseGuards(SessionGuard)` or `@UseGuards(AdminGuard)` anywhere. That's the
-natural next step, and it's gated on one more piece that doesn't exist yet (see
-"What's not built yet" below).
+and typecheck. As of Phase 7 (favorites), `SessionGuard` has its first real consumer
+(`FavoritesController`) and `apps/web` forwards the session token to it — see
+"Web → API token forwarding" below. `AdminGuard` still has no consumer (see "What's
+not built yet").
 
 **All of this is still uncommitted.** Run `git status` in `product-listing/` before
 doing anything else — check the diff, then commit or ask before building further on
@@ -118,18 +118,30 @@ admin status is derived entirely from `ADMIN_EMAILS`, not a DB row
 
 ## What's not built yet
 
-1. **No NestJS endpoint uses `SessionGuard`/`AdminGuard` yet.** They're built and
-   typecheck, but nothing calls them.
-2. **No mechanism in `apps/web` forwards the session token to NestJS.** Per
-   TECHNICAL.md's "no BFF" architecture, a Server Action calling NestJS needs to grab
-   the raw JWT (now a plain signed token, thanks to the encode/decode override) and
-   send it as `Authorization: Bearer <token>`. This doesn't exist yet — it's the
-   piece that unblocks any actually-protected NestJS route. Likely needs a small
-   helper, e.g. reading the token via `next-auth/jwt`'s `getToken()` or directly off
-   the cookie, in `apps/web/src/lib/`.
-3. Per PLAN.md, this all naturally lands with Phase 6 (admin CRUD, `AdminGuard`'s
-   first real consumer) or Phase 7 (favorites/cart, `SessionGuard`'s first real
-   consumer) — whichever gets picked up next.
+1. **`AdminGuard` still has no consumer.** `SessionGuard` now does (see below);
+   `AdminGuard` is still built and typechecks but nothing calls it. Lands with
+   Phase 6 (admin CRUD) per PLAN.md.
+
+## Web → API token forwarding (built in Phase 7, favorites)
+
+`apps/web/src/lib/session-token.ts` exports `getSessionToken()`, which reads the raw
+bearer token via `next-auth/jwt`'s `getToken({ raw: true })` against the request
+headers (`next/headers`'s `headers()`). Because of the plain-JWT encode override
+above, the cookie value **is** the token — `raw: true` just extracts it, no `secret`
+needed. Server Actions call this, then forward the token as
+`Authorization: Bearer <token>` via `postJsonWithToken`/`fetchJsonWithToken` in
+`apps/web/src/lib/api.ts`.
+
+`SessionGuard`'s first real consumer is `FavoritesController` (`apps/api/src/favorites`),
+guarding all of `GET/POST/DELETE /api/favorites`. The product page's "Add to
+favourites" button (`AddFavoriteButton.tsx`) and `/my-account`'s favourites list both
+go through this path.
+
+One gotcha: `getSessionToken()` derives `secureCookie` from whether `NEXTAUTH_URL`
+starts with `https://`, to match Auth.js's own cookie-name prefixing
+(`authjs.session-token` vs. `__Secure-authjs.session-token`). Only tested against the
+local `http://localhost:3000` setup — verify this still resolves correctly once a
+production `NEXTAUTH_URL` exists.
 
 ## UI pieces built alongside the backend work
 

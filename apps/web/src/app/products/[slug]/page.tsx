@@ -1,11 +1,14 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { auth } from "@/auth";
+import { AddFavoriteButton } from "@/components/product/AddFavoriteButton";
 import { Button } from "@/components/ui/Button";
 import { Heading } from "@/components/ui/Heading";
-import { HeartIcon, ShoppingBagIcon } from "@/components/ui/icons";
+import { ShoppingBagIcon } from "@/components/ui/icons";
 import { ProductImage } from "@/components/ui/ProductImage";
-import { fetchJson } from "@/lib/api";
-import { productDetailApiPath } from "@/lib/routes";
+import { postJsonWithToken, fetchJson } from "@/lib/api";
+import { productDetailApiPath, FAVORITES_API_PATH } from "@/lib/routes";
+import { getSessionToken } from "@/lib/session-token";
 import type { ProductWithCategory } from "@org/shared-types";
 
 export const dynamic = "force-dynamic";
@@ -28,6 +31,36 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
   if (!product) {
     notFound();
+  }
+
+  async function addFavorite(productId: string) {
+    "use server";
+    const session = await auth();
+    if (!session?.user) {
+      redirect(
+        `/sign-in?callbackUrl=${encodeURIComponent(`/products/${slug}`)}`,
+      );
+    }
+
+    const token = await getSessionToken();
+    if (!token) {
+      redirect(
+        `/sign-in?callbackUrl=${encodeURIComponent(`/products/${slug}`)}`,
+      );
+    }
+
+    const response = await postJsonWithToken(FAVORITES_API_PATH, token, {
+      productId,
+    });
+
+    if (!response.ok) {
+      return {
+        ok: false,
+        error: "Couldn't add to favourites. Please try again.",
+      };
+    }
+
+    return { ok: true };
   }
 
   return (
@@ -94,10 +127,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 <ShoppingBagIcon className="h-4 w-4" />
                 Buy now
               </Button>
-              <Button variant="secondary" size="lg" className="gap-2">
-                <HeartIcon className="h-4 w-4" />
-                Add to favourites
-              </Button>
+              <AddFavoriteButton
+                productId={product.id}
+                addFavorite={addFavorite}
+              />
             </div>
           </div>
         </section>

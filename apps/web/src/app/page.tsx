@@ -1,6 +1,8 @@
 import { Heading } from '@/components/ui/Heading';
 import { ProductGrid } from '@/components/ui/ProductGrid';
 import { fetchJson } from '@/lib/api';
+import { addFavorite, removeFavorite } from '@/lib/favorites-actions';
+import { getFavoritedProductIds } from '@/lib/favorites';
 import { PRODUCT_LIST_API_PATH } from '@/lib/routes';
 import type { ProductWithCategory } from '@org/shared-types';
 
@@ -15,7 +17,10 @@ async function getProducts() {
 }
 
 export default async function HomePage() {
-  const products = await getProducts();
+  const [products, favoritedProductIds] = await Promise.all([
+    getProducts(),
+    getFavoritedProductIds(),
+  ]);
 
   return (
     <div className="min-h-full bg-[radial-gradient(circle_at_top_left,_rgba(15,23,42,0.06),_transparent_32%)] text-slate-900">
@@ -30,7 +35,12 @@ export default async function HomePage() {
             <p className="text-sm text-slate-500">{products.length} items</p>
           </div>
 
-          <ProductGrid products={products} />
+          <ProductGrid
+            products={products}
+            favoritedProductIds={favoritedProductIds}
+            addFavorite={addFavorite.bind(null, "/")}
+            removeFavorite={removeFavorite.bind(null, "/")}
+          />
         </section>
       </main>
     </div>

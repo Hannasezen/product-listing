@@ -1,6 +1,10 @@
 export const PRODUCT_LIST_API_PATH = '/api/products';
 export const FAVORITES_API_PATH = '/api/favorites';
 
+export function favoriteApiPath(productId: string) {
+  return `${FAVORITES_API_PATH}/${productId}`;
+}
+
 export function productDetailApiPath(slug: string) {
   return `/api/products/slug/${slug}`;
 }

@@ -92,11 +92,14 @@ export function ArrowRightIcon({ className }: IconProps) {
   );
 }
 
-export function HeartIcon({ className }: IconProps) {
+export function HeartIcon({
+  className,
+  filled = false,
+}: IconProps & { filled?: boolean }) {
   return (
     <svg
       viewBox="0 0 24 24"
-      fill="none"
+      fill={filled ? "currentColor" : "none"}
       stroke="currentColor"
       strokeWidth="1.8"
       strokeLinecap="round"

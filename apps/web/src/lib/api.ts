@@ -44,3 +44,11 @@ export async function postJsonWithToken(
     body: JSON.stringify(body),
   });
 }
+
+export async function deleteWithToken(path: string, token: string): Promise<Response> {
+  return fetch(`${getApiBaseUrl()}${path}`, {
+    method: 'DELETE',
+    cache: 'no-store',
+    headers: { Authorization: `Bearer ${token}` },
+  });
+}

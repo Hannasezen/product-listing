@@ -1,14 +1,14 @@
 import Link from "next/link";
-import { notFound, redirect } from "next/navigation";
-import { auth } from "@/auth";
+import { notFound } from "next/navigation";
 import { AddFavoriteButton } from "@/components/product/AddFavoriteButton";
 import { Button } from "@/components/ui/Button";
 import { Heading } from "@/components/ui/Heading";
 import { ShoppingBagIcon } from "@/components/ui/icons";
 import { ProductImage } from "@/components/ui/ProductImage";
-import { postJsonWithToken, fetchJson } from "@/lib/api";
-import { productDetailApiPath, FAVORITES_API_PATH } from "@/lib/routes";
-import { getSessionToken } from "@/lib/session-token";
+import { fetchJson } from "@/lib/api";
+import { addFavorite, removeFavorite } from "@/lib/favorites-actions";
+import { getFavoritedProductIds } from "@/lib/favorites";
+import { productDetailApiPath } from "@/lib/routes";
 import type { ProductWithCategory } from "@org/shared-types";
 
 export const dynamic = "force-dynamic";
@@ -33,35 +33,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
     notFound();
   }
 
-  async function addFavorite(productId: string) {
-    "use server";
-    const session = await auth();
-    if (!session?.user) {
-      redirect(
-        `/sign-in?callbackUrl=${encodeURIComponent(`/products/${slug}`)}`,
-      );
-    }
-
-    const token = await getSessionToken();
-    if (!token) {
-      redirect(
-        `/sign-in?callbackUrl=${encodeURIComponent(`/products/${slug}`)}`,
-      );
-    }
-
-    const response = await postJsonWithToken(FAVORITES_API_PATH, token, {
-      productId,
-    });
-
-    if (!response.ok) {
-      return {
-        ok: false,
-        error: "Couldn't add to favourites. Please try again.",
-      };
-    }
-
-    return { ok: true };
-  }
+  const favoritedProductIds = await getFavoritedProductIds();
+  const callbackUrl = `/products/${slug}`;
 
   return (
     <div className="min-h-full bg-[radial-gradient(circle_at_top_left,_rgba(15,23,42,0.06),_transparent_32%)] text-slate-900">
@@ -123,13 +96,15 @@ export default async function ProductPage({ params }: ProductPageProps) {
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3">
-              <Button size="lg" className="gap-2">
+              <Button size="lg" className="cursor-pointer gap-2">
                 <ShoppingBagIcon className="h-4 w-4" />
                 Buy now
               </Button>
               <AddFavoriteButton
                 productId={product.id}
-                addFavorite={addFavorite}
+                addFavorite={addFavorite.bind(null, callbackUrl)}
+                removeFavorite={removeFavorite.bind(null, callbackUrl)}
+                initialIsFavorited={favoritedProductIds.has(product.id)}
               />
             </div>
           </div>

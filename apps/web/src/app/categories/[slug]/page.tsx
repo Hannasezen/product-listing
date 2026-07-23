@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { Heading } from "@/components/ui/Heading";
 import { ProductGrid } from "@/components/ui/ProductGrid";
 import { fetchJson } from "@/lib/api";
+import { addFavorite, removeFavorite } from "@/lib/favorites-actions";
+import { getFavoritedProductIds } from "@/lib/favorites";
 import { categoryDetailApiPath, productListByCategoryApiPath } from "@/lib/routes";
 import type { Category, ProductWithCategory } from "@org/shared-types";
 
@@ -38,7 +40,12 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
     notFound();
   }
 
-  const products = await getCategoryProducts(category.id);
+  const [products, favoritedProductIds] = await Promise.all([
+    getCategoryProducts(category.id),
+    getFavoritedProductIds(),
+  ]);
+
+  const callbackUrl = `/categories/${slug}`;
 
   return (
     <div className="min-h-full bg-[radial-gradient(circle_at_top_left,_rgba(15,23,42,0.06),_transparent_32%)] text-slate-900">
@@ -71,6 +78,9 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
           <ProductGrid
             products={products}
             emptyMessage="No products in this category yet."
+            favoritedProductIds={favoritedProductIds}
+            addFavorite={addFavorite.bind(null, callbackUrl)}
+            removeFavorite={removeFavorite.bind(null, callbackUrl)}
           />
         </section>
       </main>

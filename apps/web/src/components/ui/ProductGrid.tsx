@@ -1,14 +1,22 @@
 import { ItemCard } from "@/components/ui/ItemCard";
 import type { ProductWithCategory } from "@org/shared-types";
 
+type FavoriteActionResult = { ok: boolean; error?: string };
+
 type ProductGridProps = {
   products: ProductWithCategory[];
   emptyMessage?: string;
+  favoritedProductIds: Set<string>;
+  addFavorite: (productId: string) => Promise<FavoriteActionResult>;
+  removeFavorite: (productId: string) => Promise<FavoriteActionResult>;
 };
 
 export function ProductGrid({
   products,
   emptyMessage = "No products are available right now.",
+  favoritedProductIds,
+  addFavorite,
+  removeFavorite,
 }: ProductGridProps) {
   if (products.length === 0) {
     return (
@@ -23,6 +31,7 @@ export function ProductGrid({
       {products.map((product) => (
         <ItemCard
           key={product.id}
+          productId={product.id}
           slug={product.slug}
           title={product.name}
           description={
@@ -32,6 +41,9 @@ export function ProductGrid({
           price={product.price}
           imageUrl={product.imageUrl}
           stock="In stock"
+          initialIsFavorited={favoritedProductIds.has(product.id)}
+          addFavorite={addFavorite}
+          removeFavorite={removeFavorite}
         />
       ))}
     </div>
